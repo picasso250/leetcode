@@ -40,52 +40,50 @@ using namespace std;
 
 class Solution {
 public:
-    bool isSymmetric(TreeNode *root) {
-        if (root == NULL) {
+    bool isSymmetric(TreeNode *root) { // root=2
+        if (root == NULL) { // no
             return true;
         }
         stack<TreeNode *> s; // from top to down, from out to inner
-        auto left = root->left;
-        auto right = root->right;
+        auto left = root->left;   // left=3
+        auto right = root->right; // right=3
         while (true) {
-            cout << "---" << endl;
-            if ((left || right) && !(left && right)) {
-                return false;
-            }
+            // assert left.parent is not NULL
+            // assert right.parent is not NULL
+            // assert left and right are same level
+            // cout << "-----" << endl;
             if (left == NULL && right == NULL) {
-                if (!s.empty())
-                {
-                    cout << "pop" <<endl;
+                if (!s.empty()) {
+                    // cout << "pop" << endl;
                     right = s.top();
                     s.pop();
                     left = s.top();
                     s.pop();
                     continue;
+                } else {
+                    return true;
                 }
-                return true;
             }
-            cout << "compare " << right->val << " " << left->val << endl;
+            if (left == NULL || right == NULL) {
+                return false;
+            }
+            // cout << "compare " << right->val << " " << left->val << endl;
             if (right->val != left->val) {
                 return false;
             }
-            if (right->right && left->left) {
+            // cout << "go down " << endl;
+            if (right->right || left->left) {
+                // cout << "push" << endl;
+                s.push(left->right);
+                s.push(right->left);
                 left = left->left;
                 right = right->right;
-                cout << "will push?" << endl;
-                cout << left->right << " " << right->left <<endl;
-                if (left->right || right->left) {
-                    cout << "push" << endl;
-                    s.push(left->right);
-                    s.push(right->left);
-                }
+                // cout << "will push?" << endl;
+                // cout << left->right << " " << right->left <<endl;
             } else {
-                if (right->right == NULL && left->left == NULL) {
-                    cout << "out end, go inner" << endl;
-                    left = left->right;
-                    right = right->left;
-                } else {
-                    return false;
-                }
+                // cout << "out end, go inner" << endl;
+                left = left->right;
+                right = right->left;
             }
         }
     }
