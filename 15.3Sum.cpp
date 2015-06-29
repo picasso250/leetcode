@@ -12,34 +12,32 @@ public:
     vector<vector<int> > threeSum(vector<int>& nums) {
     	sort(nums.begin(), nums.end());
         int size = nums.size();
-        unordered_map<int,int> m;
-        for (int i=0;i<size;i++) {
-        	m[nums[i]] = i;
-        }
         unordered_map<int,unordered_map<int,unordered_map<int,int> > > um;
         vector<vector<int>> ret;
         for (int i=0;i<size;i++) {
         	for (int j = i+1; j < size; ++j)
         	{
         		int c = 0 - nums[i] - nums[j];
-        		auto it = m.find(c);
-        		if (it!=m.end() && it->second != i && it->second != j)
+        		for (int k=size-1;k>j;k++)
         		{
-        			int k = it->second;
-        			vector<int> v;
-        			v.push_back(nums[i]);
-        			v.push_back(nums[j]);
-        			v.push_back(nums[k]);
-        			sort(v.begin(), v.end());
-        			int ii = v[0];
-        			int kk = v[2];
-        			auto umm = um[ii][v[1]][kk]=1;
-        			// auto ummm = &umm[v[1]];
-        			// ummm[kk]=1;
-        			for (auto iv : v) {
-        				// cout<<iv<<",";
+        			if (nums[k] < c) {
+        				break;
         			}
-        			// cout<<endl;
+        			if (nums[k]==c) {
+        				vector<int> v;
+	        			v.push_back(nums[i]);
+	        			v.push_back(nums[j]);
+	        			v.push_back(nums[k]);
+	        			sort(v.begin(), v.end());
+	        			int ii = v[0];
+	        			int kk = v[2];
+	        			auto umm = um[ii][v[1]][kk]=1;
+	        			// auto ummm = &umm[v[1]];
+	        			// ummm[kk]=1;
+	        			for (auto iv : v) {
+	        				// cout<<iv<<",";
+	        			}
+        			}
         		}
         	}
         }
@@ -75,6 +73,8 @@ int main(int argc, char const *argv[])
 	Solution s;
 	vector<int> nums={-1,0,1,2,-1,-4};
 	auto vec = s.threeSum(nums);
+	vector<int> nums_={1,1,1};
+	vec = s.threeSum(nums_);
 	for (auto v : vec)
 	{
 		for (auto i : v) {
