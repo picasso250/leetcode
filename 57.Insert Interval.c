@@ -40,14 +40,16 @@ struct Interval* insert(struct Interval* intervals, int intervalsSize, struct In
     }
     // find the left
     int left = 0; // not included
+    int right = 0; // included
     int i;
     for (i = 0; i < intervalsSize; ++i)
     {
         struct Interval *p = intervals + i;
-    	if (BEFORE(newInterval.start, p))
-    	{
+        if (BEFORE(newInterval.start, p))
+        {
             // 1 will not copy i to result
             left = i;
+            right = i;
             // printf("start BEFORE [%d,%d]\n", p->start, p->end);
             break;
         }
@@ -56,18 +58,19 @@ struct Interval* insert(struct Interval* intervals, int intervalsSize, struct In
             // 3 in, skip
             // printf("start AFTER [%d,%d]\n", p->start, p->end);
             left = i+1;
+            right = i+1;
         }
         else
         {
             // 2 i not included, join me
             left = i;
+            right = i;
             newInterval.start = p->start;
             break;
         }
     }
     // printf("left %d\n", left);
-    int right = 0; // included
-    for (int j = i; j < intervalsSize; ++j)
+    for (int j = right; j < intervalsSize; ++j)
     {
         struct Interval *p = intervals + j;
         if (BEFORE(newInterval.end, p))
@@ -174,14 +177,15 @@ int main(int argc, char const *argv[])
         printf("[%d,%d]\n", res[i].start, res[i].end);
     }
 
-    struct Interval intervals_9[] = {{1,4},{10,12},{13,14},{16,16},{19,20},{21,24},{33,33},{36,39},{44,46},{48,50}};
-    struct Interval newInterval_9 = {5,13};
-    res = insert(intervals_9, sizeof(intervals_9)/sizeof(struct Interval), newInterval_9, &returnSize);
-    printf("9. ### size %d\n", returnSize);
-    for (int i = 0; i < returnSize; ++i)
-    {
-        printf("[%d,%d]\n", res[i].start, res[i].end);
-    }
+    // struct Interval intervals_9[] = {{1,4},{10,12},{13,14},{16,16},{19,20},{21,24},{33,33},{36,39},{44,46},{48,50}};
+    // struct Interval newInterval_9 = {5,13};
+    // res = insert(intervals_9, sizeof(intervals_9)/sizeof(struct Interval), newInterval_9, &returnSize);
+    // printf("9. ### size %d\n", returnSize);
+    // for (int i = 0; i < returnSize; ++i)
+    // {
+    //     printf("[%d,%d]\n", res[i].start, res[i].end);
+    // }
+
     struct Interval intervals_10[] = {{1,5}};
     struct Interval newInterval_10 = {2,3};
     res = insert(intervals_10, sizeof(intervals_10)/sizeof(struct Interval), newInterval_10, &returnSize);
