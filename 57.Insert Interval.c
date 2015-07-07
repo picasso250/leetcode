@@ -16,7 +16,7 @@ struct Interval {
  */
 struct Interval * copy(struct Interval *res, struct Interval *intervals, int count)
 {
-    printf("copy %d\n", count);
+    // printf("copy %d\n", count);
     if (count > 0) {
         memcpy((void*)(res), (void*)(intervals), sizeof(struct Interval) * (count));
     }
@@ -25,11 +25,56 @@ struct Interval * copy(struct Interval *res, struct Interval *intervals, int cou
 
 struct Interval * bsearch_interval(int value, struct Interval * intervals, int size, int *inner)
 {
+    // printf("find %d from [%d,%d] ==> %d\n", value, intervals[0].start, intervals[0].end, size);
     int low = 0;
     int high = size - 1;
     while (1)
     {
-        int mid = (low+high)/2;
+        int mid;
+        if ((high - low) <= 1)
+        {
+            if (high != low)
+            {
+                if (value <= intervals[low].end)
+                {
+                    mid = low;
+                }
+                else if (value >= intervals[high].start)
+                {
+                    mid = high;
+                }
+                else
+                {
+                    mid = low;
+                }
+            }
+            else
+            {
+                mid = low;
+            }
+            int start = intervals[mid].start;
+            int end = intervals[mid].end;
+            if (value < start)
+            {
+                (*inner) = -1;
+                // printf("%d < start:%d, high=%d\n", value, start, mid);
+            }
+            else if (end < value)
+            {
+                // printf("end: %d < %d, low=%d\n", end, value, mid);
+                (*inner) = 1;
+            }
+            else
+            {
+                // printf("%d in [%d,%d]\n", value, start, end);
+                (*inner) = 0;
+            }
+            return intervals + mid;
+        }
+        else
+        {
+            mid = (low+high)/2;
+        }
         // printf("[%d,%d] => %d\n", low, high, mid);
         // assert(low <= high);
         int start = intervals[mid].start;
@@ -37,32 +82,18 @@ struct Interval * bsearch_interval(int value, struct Interval * intervals, int s
         if (value < start)
         {
             (*inner) = -1;
-        }
-        else if (end < value)
-        {
-            (*inner) = 1;
-        }
-        else
-        {
-            (*inner) = 0;
-            return intervals + mid;
-        }
-        if (mid == low)
-        {
-            return intervals + mid;
-        }
-        if (value < start)
-        {
-            (*inner) = -1;
             high = mid;
+            // printf("%d < start:%d, high=%d\n", value, start, mid);
         }
         else if (end < value)
         {
+            // printf("end: %d < %d, low=%d\n", end, value, mid);
             (*inner) = 1;
             low = mid;
         }
         else
         {
+            // printf("%d in [%d,%d]\n", value, start, end);
             (*inner) = 0;
             return intervals + mid;
         }
@@ -109,10 +140,10 @@ struct Interval* insert(struct Interval* intervals, int intervalsSize, struct In
     {
         left = p - intervals;
     }
-    printf("left %d\n", left);
+    // printf("left %d\n", left);
     int n = intervalsSize - left;
     p = bsearch_interval(newInterval.end, p, n, &inner);
-    printf("%d, inner %d\n", p - intervals, inner);
+    // printf("find %d in [%d], inner %d\n", newInterval.end, p - intervals, inner);
     if (inner == 0)
     {
         newInterval.end = p->end;
@@ -127,13 +158,14 @@ struct Interval* insert(struct Interval* intervals, int intervalsSize, struct In
         p++;
     }
     right = intervals + intervalsSize - (p);
-    printf("right %d\n", right);
+    // printf("right %d\n", right);
     (*returnSize) = left + right + 1;
     struct Interval *res = malloc(sizeof(newInterval) * (*returnSize));
     struct Interval *rp = res;
     rp = copy(rp, intervals, left);
-    rp = copy(rp, &newInterval, 1);
-    rp = copy(rp, p, right);
+    rp->start = newInterval.start;
+    rp->end = newInterval.end;
+    rp = copy(rp+1, p, right);
     return res;
 }
 
