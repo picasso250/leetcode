@@ -3,7 +3,6 @@
 #include <string.h>
 #include <assert.h>
 
-
 struct Interval {
     int start;
     int end;
@@ -17,11 +16,57 @@ struct Interval {
  */
 struct Interval * copy(struct Interval *res, struct Interval *intervals, int count)
 {
-    // printf("copy %d\n", count);
+    printf("copy %d\n", count);
     if (count > 0) {
         memcpy((void*)(res), (void*)(intervals), sizeof(struct Interval) * (count));
     }
     return res+count;
+}
+
+struct Interval * bsearch_interval(int value, struct Interval * intervals, int size, int *inner)
+{
+    int low = 0;
+    int high = size - 1;
+    while (1)
+    {
+        int mid = (low+high)/2;
+        // printf("[%d,%d] => %d\n", low, high, mid);
+        // assert(low <= high);
+        int start = intervals[mid].start;
+        int end = intervals[mid].end;
+        if (value < start)
+        {
+            (*inner) = -1;
+        }
+        else if (end < value)
+        {
+            (*inner) = 1;
+        }
+        else
+        {
+            (*inner) = 0;
+            return intervals + mid;
+        }
+        if (mid == low)
+        {
+            return intervals + mid;
+        }
+        if (value < start)
+        {
+            (*inner) = -1;
+            high = mid;
+        }
+        else if (end < value)
+        {
+            (*inner) = 1;
+            low = mid;
+        }
+        else
+        {
+            (*inner) = 0;
+            return intervals + mid;
+        }
+    }
 }
 
 /**
@@ -38,70 +83,57 @@ struct Interval* insert(struct Interval* intervals, int intervalsSize, struct In
         copy(i, &newInterval, 1);
         return i;
     }
-    // find the left
-    int left = 0; // not included
-    int right = 0; // included
-    int i;
-    for (i = 0; i < intervalsSize; ++i)
+    // find the left using bsearch
+    int left = 0;
+    int right = 0;
+    int inner;
+    struct Interval *p = bsearch_interval(newInterval.start, intervals, intervalsSize, &inner);
+    if (inner == 0)
     {
-        struct Interval *p = intervals + i;
-        if (BEFORE(newInterval.start, p))
+        newInterval.start = p->start;
+        left = p - intervals;
+    }
+    else if (inner == 1)
+    {
+        left = p - intervals + 1;
+        if (p != (intervals+intervalsSize))
         {
-            // 1 will not copy i to result
-            left = i;
-            right = i;
-            // printf("start BEFORE [%d,%d]\n", p->start, p->end);
-            break;
-        }
-        else if (AFTER(newInterval.start, p))
-        {
-            // 3 in, skip
-            // printf("start AFTER [%d,%d]\n", p->start, p->end);
-            left = i+1;
-            right = i+1;
+            p++;
         }
         else
         {
-            // 2 i not included, join me
-            left = i;
-            right = i;
-            newInterval.start = p->start;
-            break;
+            left = p - intervals;
         }
     }
-    // printf("left %d\n", left);
-    for (int j = right; j < intervalsSize; ++j)
+    else
     {
-        struct Interval *p = intervals + j;
-        if (BEFORE(newInterval.end, p))
-        {
-            // 1 not inclued
-            right = j;
-            break;
-        }
-        else if (AFTER(newInterval.end, p))
-        {
-            // 3 not included, check next
-            right = j+1;
-            // printf("end AFTER [%d,%d]\n", p->start, p->end);
-        }
-        else
-        {
-            // 2 not included, join me
-            right = j+1;
-            newInterval.end = p->end;
-            break;
-        }
+        left = p - intervals;
     }
-    // printf("right %d\n", right);
-    int n = left;
-    int m = intervalsSize - right;
-    (*returnSize) = n+m+1;
+    printf("left %d\n", left);
+    int n = intervalsSize - left;
+    p = bsearch_interval(newInterval.end, p, n, &inner);
+    printf("%d, inner %d\n", p - intervals, inner);
+    if (inner == 0)
+    {
+        newInterval.end = p->end;
+        p++;
+    }
+    else if (inner == -1)
+    {
+
+    }
+    else
+    {
+        p++;
+    }
+    right = intervals + intervalsSize - (p);
+    printf("right %d\n", right);
+    (*returnSize) = left + right + 1;
     struct Interval *res = malloc(sizeof(newInterval) * (*returnSize));
     struct Interval *rp = res;
-    rp = copy(rp, intervals, n);
+    rp = copy(rp, intervals, left);
     rp = copy(rp, &newInterval, 1);
-    rp = copy(rp, intervals+right, m);
+    rp = copy(rp, p, right);
     return res;
 }
 
@@ -111,7 +143,7 @@ int main(int argc, char const *argv[])
     struct Interval newInterval = {2,5};
     struct Interval intervals[] = {{1,3},{6,9}};
     struct Interval * res = insert(intervals, sizeof(intervals)/sizeof(struct Interval), newInterval, &returnSize);
-    printf("size %d\n", returnSize);
+    printf("1. ### size %d\n", returnSize);
     for (int i = 0; i < returnSize; ++i)
     {
         printf("[%d,%d]\n", res[i].start, res[i].end);
@@ -120,7 +152,7 @@ int main(int argc, char const *argv[])
     struct Interval newInterval2 = {4,9};
     struct Interval intervals2[] = {{1,2},{3,5},{6,7},{8,10},{12,16}};
     res = insert(intervals2, sizeof(intervals2)/sizeof(struct Interval), newInterval2, &returnSize);
-    printf("size %d\n", returnSize);
+    printf("2. ### size %d\n", returnSize);
     for (int i = 0; i < returnSize; ++i)
     {
         printf("[%d,%d]\n", res[i].start, res[i].end);
@@ -129,7 +161,7 @@ int main(int argc, char const *argv[])
     struct Interval newInterval3 = {6,6};
     struct Interval intervals3[] = {{3,5},{12,15}};
     res = insert(intervals3, sizeof(intervals3)/sizeof(struct Interval), newInterval3, &returnSize);
-    printf("size %d\n", returnSize);
+    printf("3. ### size %d\n", returnSize);
     for (int i = 0; i < returnSize; ++i)
     {
         printf("[%d,%d]\n", res[i].start, res[i].end);
