@@ -9,24 +9,12 @@
 
 using namespace std;
 
-bool prop_weight(float w)
+// 检测是否一辆车能装得下，又不空车
+// 入：重量
+// 出：是否
+bool prop_weight(int w)
 {
 	return w > 0 && w <= 35;
-}
-
-void print_(vector<vector<int>> &xmap, vector<int> &pos)
-{
-	cout<<"[";
-	for (int i : pos)
-	{
-		cout<<i<<" ";
-	}
-	cout<<"] ";
-	for (int i = 0; i < xmap.size(); ++i)
-	{
-		cout<<xmap[i][pos[i]]<<" ";
-	}
-	cout<<endl;
 }
 
 void printv(vector<int> v)
@@ -39,6 +27,7 @@ void printv(vector<int> v)
 	cout<<"]";
 }
 
+// 从节点到节点之间的运输费用
 int dist_map[9][9] = {
 	{ 0, 13, 16, 24, 23, 26,  7, 22,  1},
 	{13,  0,  4, 12, 13, 16, 16, 10, 12},
@@ -50,6 +39,7 @@ int dist_map[9][9] = {
 	{22, 10,  9,  2,  2,  5, 27,  0, 21},
 	{ 1, 12, 15, 23, 22, 25,  6, 21,  0}
 };
+// 各节点的冷冻产品需求量，吨/10
 map<int,int> node_weight = {
 	{1,  5},
 	{2,  6},
@@ -60,6 +50,9 @@ map<int,int> node_weight = {
 	{7,  9},
 	{8, 10}
 };
+// 一辆车走过的总距离
+// 入：排列好的节点
+// 出：总距离
 int get_dist(vector<int> cart)
 {
 	int distance = 0;
@@ -77,6 +70,9 @@ int get_dist(vector<int> cart)
 	// cout<<" distance "<<distance<<endl;
 	return distance;
 }
+// 一辆车的总花费
+// 入：排列好的节点
+// 出：总花费（单位分）
 int get_fee(vector<int> cart, int sum)
 {
 	int total = 0;
@@ -95,6 +91,9 @@ int get_fee(vector<int> cart, int sum)
 	// cout<<" total "<< total*0.01 <<endl;
 	return total;
 }
+// 一辆车的总时间
+// 入：排列好的节点
+// 出：总时间（单位分）
 int get_time(vector<int> cart)
 {
 	double total = 0;
@@ -122,15 +121,17 @@ int main(int argc, char const *argv[])
 	int total = 0;
 	
 	vector<bitset<N>> v;
+	// 最小距离、最小时间、最小费用
 	int min_dist = 20000;
-	int min_fee = 20000;
 	int min_time = 20000;
+	int min_fee = 20000;
 	vector<int> min_dist_v1;
 	vector<int> min_dist_v2;
 	vector<int> min_fee_v1;
 	vector<int> min_fee_v2;
 	vector<int> min_time_v1;
 	vector<int> min_time_v2;
+	// 用二进制表示分配方案
 	for (a=0; a<256; a++)
 	{
 		bitset<N> bs(a);
@@ -140,7 +141,7 @@ int main(int argc, char const *argv[])
 		vector<int> cart2;
 		for (uint i = 0; i < 8; ++i)
 		{
-			// cout<< (i+1) <<" is on car ";
+			// 如果是1，就是1号车，否则就是二号车
 			if (bs.test(i)) {
 				// cout<<1;
 				sum1 += node_weight[i+1];
@@ -162,9 +163,7 @@ int main(int argc, char const *argv[])
 		{
 			continue;
 		}
-		vector<vector<int>> xmap;
-		vector<int> posv;
-		assert(xmap.size() == posv.size());
+		// 循环获取下一个全排列
 		do {
 			int distance = 0;
 			int time_;
