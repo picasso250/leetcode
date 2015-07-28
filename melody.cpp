@@ -103,7 +103,7 @@ int get_time(vector<int> cart)
 	     int node = cart[i];
 	     // cout<<"distance between "<<old<<" --> "<<node<<" is "<<dist_map[old][node]<<endl;
 	     assert(old != node);
-	     total += 1.0 * dist_map[old][node] / (40.0 / 60) + node_weight[node] * 10;
+	     total += 1.0 * dist_map[old][node] / (40.0 / 60) + node_weight[node];
 	     // cout<<"weight: "<<(sum*0.1)<<", ("<<old<<" -> "<<node<<") fee is "<<(dist_map[old][node] * 0.07 * sum)<<endl;
 	     old = node;
 	}
