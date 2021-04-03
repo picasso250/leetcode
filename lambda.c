@@ -107,12 +107,14 @@ lambda *parse(char *str, int size)
     int state = 0;    // 状态 1 body中;
     int stack[200];   // 左括号的坐标
     int sp = 0;       // stack pointer
+
     lambda *lmd[200]; // lambda pointer stack
     int lp = 0;
+
     lambda *cur = NULL; // current or body
-    int complete[200];  // 一个lambda的结束
-    int cp = 0;         // out side
-    bool canBeSub = false;
+
+    int ss[200];        // stack of state
+    int ssp = 0;        //
 
     // in body ?
     // (\x.
@@ -123,6 +125,7 @@ lambda *parse(char *str, int size)
 
         if (c == '\\')
         {
+            ss[ssp++] = state;
             state = 1;
             if (i + 3 >= size)
             {
@@ -180,6 +183,7 @@ lambda *parse(char *str, int size)
                 }
                 f->func.body = cur;
                 cur = f;
+                state = ss[--ssp];
             }
             else
             {
@@ -194,11 +198,10 @@ lambda *parse(char *str, int size)
         else
         {
             printf("must be alpha %c\n", str[i]);
-
             cur = come(cur, make_name(c));
         }
     }
-    if (lp > 0)
+    while (lp > 0)
     {
         if (cur == NULL)
         {
@@ -265,14 +268,15 @@ int main(int argc, char const *argv[])
     // read a string
     // char str[2000];
     // scanf("%s", &str);
-    // char *str = "\\f.(\\u.u u)(\\x.f(x x))";
+    char *str = "\\f.(\\u.u u)(\\x.f(x x))";
     // char *str = "(\\x.x)y";
     // char *str = "a";
     // char *str = "a b";
     // char *str = "a b c";
-    char *str = "a (b c)";
+    // char *str = "a (b c)";
     // char *str = "\\x.y";
     // char *str = "(\\x.y)z";
+    // char *str = "\\x.\\y.z";
     lambda *lmd = parse(str, strlen(str));
     print_lambda(lmd);
     return 0;

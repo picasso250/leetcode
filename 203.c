@@ -11,6 +11,12 @@ static struct ListNode *rm(struct ListNode *prev, struct ListNode *nd)
     free(nd);
     return prev;
 }
+//        |0|->|1|->|2|
+// case 1       ^
+//        |0|->---->|2|
+//        |0|->|1|->|2|
+// case 2  ^
+//             |1|->|2|
 struct ListNode *removeElements(struct ListNode *head, int val)
 {
     struct ListNode *p;
@@ -29,7 +35,10 @@ struct ListNode *removeElements(struct ListNode *head, int val)
                 p = rm(prev, p);
             }
         }
-        prev = p;
+        else
+        {
+            prev = p;
+        }
     }
     return head;
 }
@@ -37,7 +46,7 @@ struct ListNode *removeElements(struct ListNode *head, int val)
 int main(int argc, char const *argv[])
 {
 
-    int a[] = {1, 2, 6, 3, 4, 5, 6};
+    int a[] = {1, 2, 6, 6, 3, 4, 5, 6};
     struct ListNode *lst = make_list(a, sizeof(a) / sizeof(a[0]));
     lst = removeElements(lst, 6);
     print_list(lst);
