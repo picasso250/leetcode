@@ -310,3 +310,34 @@ func myAtoi(s string) int {
 	}
 	return n
 }
+func isPalindrome(x int) bool {
+	if x < 0 {
+		return false
+	}
+	if x == 0 {
+		return true
+	}
+	if x < 10 && x > 0 {
+		return true
+	}
+	if x%10 == 0 {
+		return false
+	}
+	rev := 0
+	for {
+		// pop right
+		r := x % 10
+		x /= 10
+
+		rev = rev*10 + r
+		if rev == x {
+			return true
+		}
+		if rev == x/10 {
+			return true
+		}
+		if x < rev {
+			return false
+		}
+	}
+}
