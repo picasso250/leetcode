@@ -395,3 +395,116 @@ func maxArea(height []int) int {
 	}
 	return max
 }
+
+type roman struct {
+	name  string
+	value int
+}
+
+func build9(rm10 roman, rm1 roman) roman {
+	return roman{rm1.name + rm10.name, rm10.value - rm1.value}
+}
+func build4(rm5 roman, rm1 roman) roman {
+	return roman{rm1.name + rm5.name, rm5.value - rm1.value}
+}
+func buildN(rm roman, n int) roman {
+	s, v := "", 0
+	for i := 0; i < n; i++ {
+		s += rm.name
+		v += rm.value
+	}
+	return roman{s, v}
+}
+
+func romanToInt(s string) int {
+	// const (
+	// 	i = iota //b=0
+	// 	v        //c=1
+	// 	x        //c=1
+	// 	l        //c=1
+	// 	c        //c=1
+	// 	d        //c=1
+	// 	m        //c=1
+	// )
+	// om := []roman{
+	// 	{"I", 1},
+	// 	{"V", 5},
+	// 	{"X", 10},
+	// 	{"L", 50},
+	// 	{"C", 100},
+	// 	{"D", 500},
+	// 	{"M", 1000},
+	// }
+	// table := []roman{om[m]}
+	// table = append(table, build9(om[m], om[c]))
+	// table = append(table, om[d])
+	// table = append(table, build4(om[d], om[c]))
+	// table = append(table, buildN(om[c], 3))
+	// table = append(table, buildN(om[c], 2))
+	// table = append(table, om[c])
+	// table = append(table, build9(om[c], om[x]))
+	// table = append(table, om[l])
+	// table = append(table, build4(om[l], om[x]))
+	// table = append(table, buildN(om[x], 3))
+	// table = append(table, buildN(om[x], 2))
+	// table = append(table, om[x])
+	// table = append(table, build9(om[x], om[i]))
+	// table = append(table, om[v])
+	// table = append(table, build4(om[v], om[i]))
+	// table = append(table, buildN(om[i], 3))
+	// table = append(table, buildN(om[i], 2))
+	// table = append(table, om[i])
+	// for i := len(table) - 1; i >= 0; i-- {
+	// 	fmt.Printf("%v\n", table[i])
+	// }
+	// fmt.Printf("%v\n", table)
+	table := []roman{
+		{"M", 1000},
+		{"CM", 900},
+		{"D", 500},
+		{"CD", 400},
+		{"CCC", 300},
+		{"CC", 200},
+		{"C", 100},
+		{"XC", 90},
+		{"L", 50},
+		{"XL", 40},
+		{"XXX", 30},
+		{"XX", 20},
+		{"X", 10},
+		{"IX", 9},
+		{"V", 5},
+		{"IV", 4},
+		{"III", 3},
+		{"II", 2},
+		{"I", 1},
+	}
+	tryMatch := func(start int) (length int, value int) {
+		for _, r := range table {
+			length = indexStrStart(s, start, r.name)
+			if length > 0 {
+				return length, r.value
+			}
+		}
+		return 0, 0
+	}
+	i := 0
+	value := 0
+	for i < len(s) {
+		l, v := tryMatch(i)
+		value += v
+		i += l
+	}
+	return value
+}
+func indexStrStart(s string, start int, pat string) (length int) {
+	if start+len(pat) > len(s) {
+		return -1
+	}
+	for j := 0; j < len(pat); j++ {
+		if s[start+j] != pat[j] {
+			return -1
+		}
+	}
+	return len(pat)
+}
