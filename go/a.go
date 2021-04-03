@@ -3,6 +3,7 @@ package main
 import (
 	"math"
 	"sort"
+	"strings"
 )
 
 func max2Ints(a, b int) int {
@@ -215,4 +216,35 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	} else {
 		return float64(a)
 	}
+}
+func convert(s string, numRows int) string {
+	mem := make([][]byte, numRows)
+	for i := 0; i < numRows; i++ {
+		mem[i] = make([]byte, 0)
+	}
+	const dBottom = true
+	const dTop = false
+	direct := dTop // 向下
+	pos := 0
+	for i := 0; i < len(s); i++ {
+		mem[pos] = append(mem[pos], s[i])
+		if pos == numRows-1 {
+			direct = !direct
+		} else if pos == 0 {
+			direct = !direct
+		}
+		if numRows > 1 {
+			if direct {
+				pos++
+			} else {
+				pos--
+			}
+		}
+
+	}
+	ss := make([]string, numRows)
+	for i, bs := range mem {
+		ss[i] = string(bs)
+	}
+	return strings.Join(ss, "")
 }
