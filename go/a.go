@@ -269,3 +269,44 @@ func reverse(x int) int {
 	fmt.Println(rev)
 	return rev
 }
+func myAtoi(s string) int {
+	state := 0 // 0 space, 1 sign, 2 numbers, 3 other
+	sign := 1
+	n := 0
+	maxMod := (math.MaxInt32 % 10)
+	minMod := (math.MinInt32 % 10)
+	for i := 0; i < len(s); i++ {
+		if state == 0 {
+			if s[i] == ' ' {
+				continue
+			} else if s[i] == '-' {
+				sign = -1
+				state = 2
+			} else if s[i] == '+' {
+				sign = 1
+				state = 2
+			} else if s[i] >= '0' && s[i] <= '9' {
+				n = int(s[i]-'0') * sign
+				state = 2
+			} else {
+				break
+			}
+		} else if state == 2 {
+			if s[i] >= '0' && s[i] <= '9' {
+				d := int(s[i] - '0')
+				if n > math.MaxInt32/10 || (n == math.MaxInt32/10 && d >= maxMod) {
+					n = math.MaxInt32
+					return n
+				}
+				if n < math.MinInt32/10 || (n == math.MinInt32/10 && sign*d <= minMod) {
+					n = math.MinInt32
+					return n
+				}
+				n = n*10 + sign*d
+			} else {
+				break
+			}
+		}
+	}
+	return n
+}
