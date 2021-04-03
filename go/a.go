@@ -508,3 +508,37 @@ func indexStrStart(s string, start int, pat string) (length int) {
 	}
 	return len(pat)
 }
+func longestCommonPrefix(strs []string) string {
+	if len(strs) == 0 {
+		return ""
+	}
+	length := minLenStrs(strs)
+	if length == 0 {
+		return ""
+	}
+	common := make([]byte, length)
+	for i := 0; i < length; i++ {
+		for j, s := range strs {
+			if len(s) == 0 {
+				return ""
+			}
+			if j == 0 {
+				common[i] = s[i]
+			} else {
+				if common[i] != s[i] {
+					return string(common[:i])
+				}
+			}
+		}
+	}
+	return string(common)
+}
+func minLenStrs(strs []string) (length int) {
+	length = len(strs[0])
+	for _, s := range strs {
+		if len(s) < length {
+			length = len(s)
+		}
+	}
+	return length
+}
