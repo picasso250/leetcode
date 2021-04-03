@@ -180,3 +180,55 @@ func Test_isPalindrome(t *testing.T) {
 		})
 	}
 }
+
+func Test_isMatch(t *testing.T) {
+	type args struct {
+		s string
+		p string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// {"empty", args{"", ""}, true},
+		// {"a", args{"a", "a"}, true},
+		// {".", args{"a", "."}, true},
+		{".*", args{"a", ".*"}, true},
+		{"1", args{"aa", "a"}, false},
+		{"2", args{"aa", "a*"}, true},
+		{"3", args{"ab", ".*"}, true},
+		{"4", args{"aab", "c*a*b"}, true},
+		{"5", args{"mississippi", "mis*is*p*."}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isMatch(tt.args.s, tt.args.p); got != tt.want {
+				t.Errorf("isMatch() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_maxArea(t *testing.T) {
+	type args struct {
+		height []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"1x1", args{[]int{1, 1}}, 1},
+		{"1", args{[]int{1, 8, 6, 2, 5, 4, 8, 3, 7}}, 49},
+		{"3", args{[]int{4, 3, 2, 1, 4}}, 16},
+		{"4", args{[]int{1, 2, 1}}, 2},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxArea(tt.args.height); got != tt.want {
+				t.Errorf("maxArea() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

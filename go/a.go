@@ -341,3 +341,57 @@ func isPalindrome(x int) bool {
 		}
 	}
 }
+func matches(s, p byte) bool {
+	if p == '.' {
+		return true
+	}
+	return s == p
+}
+func isMatch(s string, p string) bool {
+	dp := make([][]bool, len(s)+1)
+	for i := range dp {
+		dp[i] = make([]bool, len(p)+1)
+		dp[i][0] = true
+	}
+	dp[0][0] = true
+	for i := 0; i < len(dp); i++ {
+		for j := 0; j <= len(p); j++ {
+			// if i == 0 && j == 0 {
+			// 	continue
+			// }
+			if i-1 >= 0 && j-1 >= 0 && p[j-1] != '*' {
+				if matches(s[i-1], p[j-1]) {
+					dp[i][j] = dp[i-1][j-1]
+				} else {
+					dp[i][j] = false
+				}
+			} else if i-1 >= 0 && j-2 >= 0 {
+				if matches(s[i-1], p[j-2]) {
+					dp[i][j] = dp[i-1][j] || dp[i][j-2]
+				} else {
+					dp[i][j] = dp[i][j-2]
+				}
+			}
+		}
+	}
+	return dp[len(s)][len(p)]
+}
+func maxArea(height []int) int {
+	max := -1
+	i := 0
+	j := len(height) - 1
+	for i < j {
+		a := j - i
+		h := min2Ints(height[i], height[j])
+		s := a * h
+		if s > max {
+			max = s
+		}
+		if height[i] < height[j] { // 移动小的
+			i++
+		} else {
+			j--
+		}
+	}
+	return max
+}
