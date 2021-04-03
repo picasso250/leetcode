@@ -251,18 +251,21 @@ func convert(s string, numRows int) string {
 }
 func reverse(x int) int {
 	rev := 0
-	// maxMod:=(math.MaxInt32 % 10)
-	// minMod:=(math.MinInt32 % 10)
+	maxMod := (math.MaxInt32 % 10)
+	minMod := (math.MinInt32 % 10)
+	// fmt.Println(math.MaxInt32 / 10)
 	for x != 0 {
 		pop := x % 10
 		x /= 10
-		if rev > math.MaxInt32/10 || (rev == math.MaxInt32/10 && pop == 7) {
+		// 214748364
+		if rev > math.MaxInt32/10 || (rev == math.MaxInt32/10 && pop == maxMod) {
 			return 0
 		}
-		if rev < math.MinInt32/10 || (rev == math.MinInt32/10 && pop == -8) {
+		if rev < math.MinInt32/10 || (rev == math.MinInt32/10 && pop == minMod) {
 			return 0
 		}
 		rev = rev*10 + pop
 	}
+	fmt.Println(rev)
 	return rev
 }
