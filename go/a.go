@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -541,4 +542,31 @@ func minLenStrs(strs []string) (length int) {
 		}
 	}
 	return length
+}
+func threeSum(nums []int) [][]int {
+	m := make(map[int]int)
+	ns := make([]int, len(nums))
+	copy(ns, nums)
+	sort.Ints(ns)
+	for i, n := range ns {
+		m[n] = i
+	}
+	r := make(map[string][]int)
+	for i := 0; i < len(ns); i++ {
+		for j := len(ns) - 1; j > i; j-- {
+			c := 0 - ns[i] - ns[j]
+			ii, ok := m[c]
+			if ok && c >= ns[j] && (ii != i && ii != j) {
+				A := []int{ns[i], ns[j], c}
+				// sort.Ints(A)
+				S := []string{strconv.Itoa(A[0]), strconv.Itoa(A[1]), strconv.Itoa(A[2])}
+				r[strings.Join(S, ",")] = A
+			}
+		}
+	}
+	ret := make([][]int, 0)
+	for _, x := range r {
+		ret = append(ret, x)
+	}
+	return ret
 }
