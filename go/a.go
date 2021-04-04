@@ -570,3 +570,41 @@ func threeSum(nums []int) [][]int {
 	}
 	return ret
 }
+func letterCombinations(digits string) []string {
+	m := map[byte][]byte{
+		'2': []byte("abc"),
+		'3': []byte("def"),
+		'4': []byte("ghi"),
+		'5': []byte("jkl"),
+		'6': []byte("mno"),
+		'7': []byte("pqrs"),
+		'8': []byte("tuv"),
+		'9': []byte("wxyz"),
+	}
+	ret := make([][]byte, 0)
+	for i := 0; i < len(digits); i++ {
+		bs := m[digits[i]]
+		// map
+		if len(ret) == 0 {
+			for _, b := range bs {
+				ret = append(ret, []byte{b})
+			}
+		} else {
+			r := make([][]byte, 0)
+			for _, rr := range ret {
+				for _, b := range bs {
+					rrr := make([]byte, len(rr)+1)
+					copy(rrr[:len(rr)], rr)
+					rrr[len(rr)] = b
+					r = append(r, rrr)
+				}
+			}
+			ret = r
+		}
+	}
+	rr := make([]string, len(ret))
+	for i, r := range ret {
+		rr[i] = string(r)
+	}
+	return rr
+}
