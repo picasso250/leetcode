@@ -608,3 +608,188 @@ func letterCombinations(digits string) []string {
 	}
 	return rr
 }
+
+//   Definition for singly-linked list.
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+	if head == nil {
+		return nil
+	}
+	p := head
+	var prevDel *ListNode = nil
+	var toDel *ListNode = nil
+	var prev *ListNode
+	i := 0
+	for p != nil {
+		if i >= n-1 {
+			prevDel = prev
+		}
+		if i >= n {
+			toDel = p
+		}
+		i++
+		prev = p
+		p = p.Next
+	}
+	// del
+	head = head.delNode(toDel, prevDel)
+	return head
+}
+func (head *ListNode) delNode(toDel *ListNode, prevDel *ListNode) *ListNode {
+	if head == nil {
+		return nil
+	}
+	if toDel == head {
+		newHead := head.Next
+		head.Next = nil
+		return newHead
+	}
+	if prevDel != nil {
+		if prevDel.Next != toDel {
+			panic("prevDel's next is not toDel")
+		}
+		prevDel.Next = toDel.Next
+		toDel.Next = nil
+	}
+	return head
+}
+func toList(lst []int) *ListNode {
+	if len(lst) == 0 {
+		return nil
+	}
+	l := make([]ListNode, len(lst))
+	for i, v := range lst {
+		var next *ListNode
+		if i == len(lst)-1 {
+			next = nil
+		} else {
+			next = &l[i+1]
+		}
+		l[i] = ListNode{v, next}
+	}
+	return &l[0]
+}
+func (head *ListNode) toSlice() []int {
+	a := make([]int, 0)
+	for p := head; p != nil; p = p.Next {
+		a = append(a, p.Val)
+	}
+	return a
+}
+func (head *ListNode) toStrings() []string {
+	a := make([]string, 0)
+	for p := head; p != nil; p = p.Next {
+		a = append(a, strconv.Itoa(p.Val))
+	}
+	return a
+}
+func (head *ListNode) ToString() string {
+	return fmt.Sprintf("[%s]", strings.Join(head.toStrings(), ","))
+}
+func isValid(s string) bool {
+	stack := []rune{}
+	for _, c := range s {
+		if c == '(' || c == '[' || c == '{' {
+			stack = append(stack, c)
+		} else if c == ')' {
+			if len(stack) > 0 && stack[len(stack)-1] == '(' {
+				stack = stack[:len(stack)-1]
+			} else {
+				return false
+			}
+		} else if c == ']' {
+			if len(stack) > 0 && stack[len(stack)-1] == '[' {
+				stack = stack[:len(stack)-1]
+			} else {
+				return false
+			}
+		} else if c == '}' {
+			if len(stack) > 0 && stack[len(stack)-1] == '{' {
+				stack = stack[:len(stack)-1]
+			} else {
+				return false
+			}
+		}
+	}
+	return len(stack) == 0
+}
+func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
+	if l1 == nil {
+		return l2
+	}
+	if l2 == nil {
+		return l1
+	}
+	var head *ListNode
+	if l1.Val < l2.Val {
+		head = l1
+	} else {
+		head = l2
+	}
+	var p *ListNode
+	for l1 != nil && l2 != nil {
+		if l1.Val < l2.Val {
+			// push l1
+			t := l1.Next
+			l1.Next = nil
+			p = pushListNode(p, l1)
+			l1 = t
+		} else {
+			t := l2.Next
+			l2.Next = nil
+			p = pushListNode(p, l2)
+			l2 = t
+		}
+	}
+	if l1 != nil {
+		pushListNode(p, l1)
+	}
+	if l2 != nil {
+		pushListNode(p, l2)
+	}
+	return head
+}
+func pushListNode(tail *ListNode, node *ListNode) *ListNode {
+	if node == nil {
+		panic("node is nil")
+	}
+	// if node.Next != nil {
+	// 	panic("node.Next is not nil")
+	// }
+	if tail == nil {
+		tail = node
+	} else {
+		tail.Next = node
+	}
+	return node
+}
+
+func toParenthesis(a interface{}) string {
+	if a == nil {
+		return ""
+	}
+	aa := a.([]interface{})
+	s := []string{}
+	for _, a_ := range aa {
+		s = append(s, toParenthesis(a_))
+	}
+	return strings.Join(s, "")
+}
+func generateParenthesisStruct(n int) []interface{} {
+	if n == 1 {
+		return []interface{}{[]interface{}{}}
+	}
+	a := generateParenthesisStruct(n - 1)
+	ret := []interface{}{}
+	for _,aa := range a{
+		
+	}
+
+}
+func generateParenthesis(n int) []string {
+
+}
