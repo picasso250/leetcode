@@ -888,3 +888,29 @@ func removeElement(nums []int, val int) int {
 	}
 	return len(nums) - d
 }
+func divide(dividend int, divisor int) int {
+	if dividend == 0 {
+		return 0
+	}
+	sign := 1
+	if (dividend < 0 && divisor > 0) || (dividend > 0 && divisor < 0) {
+		sign = -1
+	}
+	if dividend < 0 {
+		dividend = -dividend
+	}
+	if divisor < 0 {
+		divisor = -divisor
+	}
+	left := dividend
+	i := 0
+	for left >= divisor {
+		left -= divisor
+		i++
+	}
+	if sign > 0 {
+		return i
+	} else {
+		return -i
+	}
+}
