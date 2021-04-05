@@ -914,3 +914,67 @@ func divide(dividend int, divisor int) int {
 		return -i
 	}
 }
+func findSubstring(s string, words []string) []int {
+	if len(s) == 0 {
+		return []int{}
+	}
+	if len(words) == 0 {
+		return []int{}
+	}
+	// n := wordsLength(words)
+	ret := make([]int, 0)
+	for i := 0; i < len(s); {
+		if findSubstringAllMatch(s[i:], words) {
+			ret = append(ret, i)
+			i++
+		} else {
+			i++
+		}
+	}
+	return ret
+}
+func wordsLength(words []string) int {
+	n := 0
+	for _, word := range words {
+		n += len(word)
+	}
+	return n
+}
+func findSubstringAllMatch(s string, words []string) bool {
+	for i := 0; i < len(s) && len(words) > 0; {
+		var anyFound = false
+		for j, word := range words {
+			var found bool
+			found = findSubStringBegin(s[i:], word)
+			anyFound = anyFound || found
+			if found {
+				i += len(word)
+				words = removeWord(words, j)
+				break
+			}
+		}
+		if !anyFound {
+			return false
+		}
+	}
+	return len(words) == 0
+}
+func removeWord(words []string, j int) []string {
+	a := words[:j]
+	b := words[j+1:]
+	ret := make([]string, len(a)+len(b))
+	copy(ret[:j], a)
+	copy(ret[j:], b)
+	return ret
+}
+func findSubStringBegin(s string, word string) bool {
+	if len(s) < len(word) {
+		return false
+	}
+	for i := 0; i < len(s) && i < len(word); i++ {
+		if s[i] != word[i] {
+			return false
+		}
+	}
+	return true
+}
