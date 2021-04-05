@@ -789,3 +789,21 @@ func generateParenthesis(n int) []string {
 	sort.Strings(ret)
 	return ret
 }
+func mergeKLists(lists []*ListNode) *ListNode {
+	// k := len(lists)
+	// ss := make([][]int, k)
+	s := make([]int, 0)
+	for _, l := range lists {
+		// ss[i] = l.toSlice()
+		s = append(s, toInts(l)...)
+	}
+	sort.Ints(s)
+	return toList(s)
+}
+func toInts(head *ListNode) []int {
+	a := make([]int, 0)
+	for p := head; p != nil; p = p.Next {
+		a = append(a, p.Val)
+	}
+	return a
+}
