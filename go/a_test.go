@@ -468,3 +468,28 @@ func Test_swapPairs(t *testing.T) {
 		})
 	}
 }
+
+func Test_removeDuplicates(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	type result struct {
+		length int
+		nums   []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want result
+	}{
+		{"1", args{[]int{1, 1, 2}}, result{2, []int{1, 2}}},
+		{"2", args{[]int{0, 0, 1, 1, 1, 2, 2, 3, 3, 4}}, result{5, []int{0, 1, 2, 3, 4}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := removeDuplicates(tt.args.nums); !reflect.DeepEqual(result{got, tt.args.nums[:got]}, tt.want) {
+				t.Errorf("removeDuplicates() = %v %v, want %v", got, tt.args.nums[:got], tt.want)
+			}
+		})
+	}
+}

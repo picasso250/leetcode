@@ -837,3 +837,43 @@ func swap2(prev *ListNode, n1 *ListNode, n2 *ListNode) (next *ListNode, tail *Li
 	n1.Next = t
 	return n1, t
 }
+func reverseKGroup(head *ListNode, k int) *ListNode {
+	return head
+}
+func reverseList(dummy *ListNode) *ListNode {
+	head := dummy.Next
+	if head == nil {
+		return nil
+	}
+	p := head
+	var prev *ListNode
+	var newHead *ListNode
+	for {
+		t := p.Next
+		if prev != nil {
+			p.Next = prev
+		}
+		if t == nil {
+			newHead = p
+			break
+		}
+		prev = p
+		p = t
+	}
+	return newHead
+}
+func removeDuplicates(nums []int) int {
+	d := 0
+	prev := 0
+	for i := 0; i < len(nums); i++ {
+		if i > 0 {
+			if nums[i] == prev {
+				d++
+			} else {
+				nums[i-d] = nums[i]
+			}
+		}
+		prev = nums[i]
+	}
+	return len(nums) - d
+}
