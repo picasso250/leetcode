@@ -768,28 +768,24 @@ func pushListNode(tail *ListNode, node *ListNode) *ListNode {
 	return node
 }
 
-func toParenthesis(a interface{}) string {
-	if a == nil {
-		return ""
-	}
-	aa := a.([]interface{})
-	s := []string{}
-	for _, a_ := range aa {
-		s = append(s, toParenthesis(a_))
-	}
-	return strings.Join(s, "")
-}
-func generateParenthesisStruct(n int) []interface{} {
-	if n == 1 {
-		return []interface{}{[]interface{}{}}
-	}
-	a := generateParenthesisStruct(n - 1)
-	ret := []interface{}{}
-	for _,aa := range a{
-		
-	}
-
-}
 func generateParenthesis(n int) []string {
-
+	if n == 0 {
+		return []string{""}
+	}
+	if n == 1 {
+		return []string{"()"}
+	}
+	// 划分
+	ret := []string{}
+	for i := 0; i <= n-1; i++ {
+		j := n - 1 - i
+		left, right := generateParenthesis(i), generateParenthesis(j)
+		for _, ll := range left {
+			for _, rr := range right {
+				ret = append(ret, "("+ll+")"+rr)
+			}
+		}
+	}
+	sort.Strings(ret)
+	return ret
 }
