@@ -807,3 +807,33 @@ func toInts(head *ListNode) []int {
 	}
 	return a
 }
+func swapPairs(head *ListNode) *ListNode {
+	if head == nil {
+		return head
+	}
+	prev := &ListNode{0, head}
+	dummy := prev
+	n1 := head
+	for {
+		prev, n1 = swap2(prev, n1, n1.Next)
+		if n1 == nil {
+			break
+		}
+	}
+	return dummy.Next
+}
+
+// next.Next == tail
+func swap2(prev *ListNode, n1 *ListNode, n2 *ListNode) (next *ListNode, tail *ListNode) {
+	if n1 == nil {
+		return nil, nil
+	}
+	if n2 == nil {
+		return nil, nil
+	}
+	prev.Next = n2
+	t := n2.Next
+	n2.Next = n1
+	n1.Next = t
+	return n1, t
+}

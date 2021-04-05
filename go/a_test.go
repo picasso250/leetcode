@@ -446,3 +446,25 @@ func Test_mergeKLists(t *testing.T) {
 		})
 	}
 }
+
+func Test_swapPairs(t *testing.T) {
+	type args struct {
+		head *ListNode
+	}
+	tests := []struct {
+		name string
+		args args
+		want *ListNode
+	}{
+		{"1", args{toList([]int{1, 2, 3, 4})}, toList([]int{2, 1, 4, 3})},
+		{"2", args{toList([]int{})}, toList([]int{})},
+		{"3", args{toList([]int{1})}, toList([]int{1})},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := swapPairs(tt.args.head); !reflect.DeepEqual(got.ToString(), tt.want.ToString()) {
+				t.Errorf("swapPairs() = %s, want %s", got.ToString(), tt.want.ToString())
+			}
+		})
+	}
+}
