@@ -994,3 +994,67 @@ func findSubStringBegin(s string, word string) bool {
 	}
 	return true
 }
+
+type parPos struct {
+	begin int
+	end   int
+}
+
+func longestValidParentheses(s string) int {
+	stack := make([]int, 0)
+	posStack := make([]parPos, 0)
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c == '(' {
+			stack = append(stack, i)
+		} else if c == ')' {
+			if len(stack) == 0 {
+				// do nothing
+			} else {
+				pos := stack[len(stack)-1]
+				stack = stack[:len(stack)-1]
+				posStack = pushPosStack(posStack, pos, i+1)
+			}
+		}
+	}
+	return maxParsLen(posStack)
+}
+func maxParsLen(ps []parPos) int {
+	max := 0
+	for _, p := range ps {
+		length := p.end - p.begin
+		if length > max {
+			max = length
+		}
+	}
+	return max
+}
+func pushPosStack(s []parPos, begin, end int) []parPos {
+	p := parPos{begin, end}
+	if len(s) == 0 {
+		return append(s, p)
+	}
+	last := s[len(s)-1]
+	if inPar(last, p) {
+		s[len(s)-1] = p
+	} else {
+		s = append(s, p)
+	}
+	if len(s) >= 2 {
+		last = s[len(s)-1]
+		last2 := s[len(s)-2]
+		if isParConnect(last2, last) {
+			s = append(s[:len(s)-2], parConnect(last2, last))
+		}
+	}
+	return s
+}
+func inPar(small, big parPos) bool {
+	return small.begin > big.begin && small.end < big.end
+}
+func isParConnect(a, b parPos) bool {
+	return a.end == b.begin
+}
+func parConnect(a, b parPos) parPos {
+	return parPos{a.begin, b.end}
+}
