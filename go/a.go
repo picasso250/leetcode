@@ -877,3 +877,14 @@ func removeDuplicates(nums []int) int {
 	}
 	return len(nums) - d
 }
+func removeElement(nums []int, val int) int {
+	d := 0
+	for i := 0; i < len(nums); i++ {
+		if nums[i] == val {
+			d++
+		} else {
+			nums[i-d] = nums[i]
+		}
+	}
+	return len(nums) - d
+}
