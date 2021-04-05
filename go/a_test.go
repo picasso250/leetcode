@@ -529,6 +529,9 @@ func Test_findSubstring(t *testing.T) {
 		{"1", args{"barfoothefoobarman", []string{"foo", "bar"}}, []int{0, 9}},
 		{"2", args{"wordgoodgoodgoodbestword", []string{"word", "good", "best", "word"}}, []int{}},
 		{"t1", args{"barfoofoobarthefoobarman", []string{"bar", "foo", "the"}}, []int{6, 9, 12}},
+		{"t2", args{
+			"lingmindraboofooowingdingbarrwingmonkeypoundcake",
+			[]string{"fooo", "barr", "wing", "ding", "wing"}}, []int{13}},
 	}
 
 	for _, tt := range tests {

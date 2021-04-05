@@ -922,16 +922,24 @@ func findSubstring(s string, words []string) []int {
 		return []int{}
 	}
 	// n := wordsLength(words)
+	wordMap := words2map(words)
+	n := len(words)
+	k := len(words[0])
 	ret := make([]int, 0)
-	for i := 0; i < len(s); {
-		if findSubstringAllMatch(s[i:], words) {
+	for i := 0; i < len(s); i++ {
+		if findSubstringAllMatch(s[i:], n, k, wordMap) {
 			ret = append(ret, i)
-			i++
 		} else {
-			i++
 		}
 	}
 	return ret
+}
+func words2map(words []string) map[string]int {
+	m := map[string]int{}
+	for _, word := range words {
+		m[word]++
+	}
+	return m
 }
 func wordsLength(words []string) int {
 	n := 0
@@ -940,24 +948,32 @@ func wordsLength(words []string) int {
 	}
 	return n
 }
-func findSubstringAllMatch(s string, words []string) bool {
-	for i := 0; i < len(s) && len(words) > 0; {
-		var anyFound = false
-		for j, word := range words {
-			var found bool
-			found = findSubStringBegin(s[i:], word)
-			anyFound = anyFound || found
-			if found {
-				i += len(word)
-				words = removeWord(words, j)
-				break
-			}
-		}
-		if !anyFound {
+func findSubstringAllMatch(s string, n, k int, wordMap map[string]int) bool {
+	if len(s) < n*k {
+		return false
+	}
+	m := str2map(s[:n*k], k)
+	return mapEqual(wordMap, m)
+}
+func str2map(s string, k int) map[string]int {
+	m := map[string]int{}
+	for i := 0; i < len(s); i += k {
+		m[s[i:i+k]]++
+	}
+	return m
+}
+func mapEqual(a, b map[string]int) bool {
+	for k := range a {
+		if b[k] != a[k] {
 			return false
 		}
 	}
-	return len(words) == 0
+	for k := range b {
+		if a[k] != b[k] {
+			return false
+		}
+	}
+	return true
 }
 func removeWord(words []string, j int) []string {
 	a := words[:j]
