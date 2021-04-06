@@ -1058,3 +1058,55 @@ func isParConnect(a, b parPos) bool {
 func parConnect(a, b parPos) parPos {
 	return parPos{a.begin, b.end}
 }
+func isValidSudoku(board [][]byte) bool {
+	// 数字 1-9 在每一行只能出现一次。
+	for i := 0; i < 9; i++ {
+		m := make(map[byte]bool)
+		for j := 0; j < 9; j++ {
+			n := board[i][j]
+			if n != '.' {
+				if m[n] {
+					return false
+				}
+				m[n] = true
+			}
+		}
+	}
+	// 数字 1-9 在每一列只能出现一次。
+	for i := 0; i < 9; i++ {
+		m := make(map[byte]bool)
+		for j := 0; j < 9; j++ {
+			n := board[j][i]
+			if n != '.' {
+				if m[n] {
+					return false
+				}
+				m[n] = true
+			}
+		}
+	}
+	// 数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 3; j++ {
+			if !isValid33(board, i*3, j*3) {
+				return false
+			}
+		}
+	}
+	return true
+}
+func isValid33(board [][]byte, i int, j int) bool {
+	m := make(map[byte]bool)
+	for ii := 0; ii < 3; ii++ {
+		for jj := 0; jj < 3; jj++ {
+			n := board[i+ii][j+jj]
+			if n != '.' {
+				if m[n] {
+					return false
+				}
+				m[n] = true
+			}
+		}
+	}
+	return true
+}
