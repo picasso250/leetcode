@@ -1203,3 +1203,91 @@ func solveSudokuPossible(m [10]bool) (ret []int) {
 	}
 	return
 }
+func multiply(num1 string, num2 string) string {
+	if num1 == "0" || num2 == "0" {
+		return "0"
+	}
+	n1, n2 := []byte(num1), []byte(num2)
+	var aa []byte
+	zeros := []byte{}
+	for i := len(n2) - 1; i >= 0; i-- {
+		b := n2[i]
+		a := multiply1(n1, b)
+		a = append(a, zeros...)
+		zeros = append(zeros, '0')
+		if len(aa) == 0 {
+			aa = a
+		} else {
+			aa = multiplyAdd(aa, a)
+		}
+	}
+	return string(multiplyRemoveLeadingZeros(aa))
+}
+func multiplyRemoveLeadingZeros(a []byte) []byte {
+	for i := 0; i < len(a); i++ {
+		if a[i] != '0' {
+			return a[i:]
+		}
+	}
+	return []byte{'0'}
+}
+func multiply1(num1 []byte, num2 byte) []byte {
+	size := len(num1)
+	ret := make([]byte, size+1)
+	n2 := num2 - '0'
+	carry := 0
+	for i := size - 1; i >= 0; i-- {
+		n1 := num1[i] - '0'
+		c := int(n1*n2) + carry
+		if c >= 10 {
+			carry = c / 10
+			c = c % 10
+		} else {
+			carry = 0
+		}
+		ret[i+1] = byte('0' + c)
+	}
+	if carry > 0 {
+		ret[0] = byte(carry + '0')
+	} else {
+		ret = ret[1:]
+	}
+	return ret
+}
+func multiplyAdd(num1, num2 []byte) []byte {
+	carry := 0
+	size1, size2 := len(num1), len(num2)
+	if size1 > size2 {
+		num2 = append(make([]byte, size1-size2), num2...)
+	} else {
+		num1 = append(make([]byte, size2-size1), num1...)
+	}
+	size := max2Ints(size1, size2)
+	ret := make([]byte, size+1)
+	for i := size - 1; i >= 0; i-- {
+		a, b := multiplyByte2int(num1[i]), multiplyByte2int(num2[i])
+		var n int
+		n, carry = multiplyAdd3(a, b, carry)
+		ret[i+1] = byte('0' + n)
+	}
+	if carry > 0 {
+		ret[0] = byte('0' + carry)
+	} else {
+		ret = ret[1:]
+	}
+	return ret
+}
+func multiplyByte2int(a byte) int {
+	if a == 0 {
+		return 0
+	}
+	return int(a - '0')
+}
+func multiplyAdd3(a, b, c int) (n, carry int) {
+	n = a + b + c
+	if n > 9 {
+		n = n - 10
+		carry = 1
+	}
+	return
+}
