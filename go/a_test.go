@@ -606,3 +606,64 @@ func Test_isValidSudoku(t *testing.T) {
 		})
 	}
 }
+
+func Test_solveSudoku(t *testing.T) {
+	type args struct {
+		board [][]byte
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{"1", args{[][]byte{
+			{'5', '3', '.', '.', '7', '.', '.', '.', '.'},
+			{'6', '.', '.', '1', '9', '5', '.', '.', '.'},
+			{'.', '9', '8', '.', '.', '.', '.', '6', '.'},
+			{'8', '.', '.', '.', '6', '.', '.', '.', '3'},
+			{'4', '.', '.', '8', '.', '3', '.', '.', '1'},
+			{'7', '.', '.', '.', '2', '.', '.', '.', '6'},
+			{'.', '6', '.', '.', '.', '.', '2', '8', '.'},
+			{'.', '.', '.', '4', '1', '9', '.', '.', '5'},
+			{'.', '.', '.', '.', '8', '.', '.', '7', '9'},
+		}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			solveSudoku(tt.args.board)
+			solveSudokuPrint(tt.args.board)
+			if !isValidSudoku(tt.args.board) {
+				t.Errorf("not isValidSudoku() ")
+			}
+		})
+	}
+}
+
+func Test_solveSudokuCollectHoles(t *testing.T) {
+	type args struct {
+		board [][]byte
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantRet int
+	}{
+		{"1", args{[][]byte{
+			{'5', '3', '.', '.', '7', '.', '.', '.', '.'},
+			{'6', '.', '.', '1', '9', '5', '.', '.', '.'},
+			{'.', '9', '8', '.', '.', '.', '.', '6', '.'},
+			{'8', '.', '.', '.', '6', '.', '.', '.', '3'},
+			{'4', '.', '.', '8', '.', '3', '.', '.', '1'},
+			{'7', '.', '.', '.', '2', '.', '.', '.', '6'},
+			{'.', '6', '.', '.', '.', '.', '2', '8', '.'},
+			{'.', '.', '.', '4', '1', '9', '.', '.', '5'},
+			{'.', '.', '.', '.', '8', '.', '.', '7', '9'},
+		}}, 51},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotRet := solveSudokuCollectHoles(tt.args.board); !reflect.DeepEqual(len(gotRet), tt.wantRet) {
+				t.Errorf("solveSudokuCollectHoles() = %v, want %v", gotRet, tt.wantRet)
+			}
+		})
+	}
+}

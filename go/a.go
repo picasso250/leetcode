@@ -1110,3 +1110,96 @@ func isValid33(board [][]byte, i int, j int) bool {
 	}
 	return true
 }
+func solveSudoku(board [][]byte) {
+	var mi [9][10]bool
+	var mj [9][10]bool
+	var m3 [9][10]bool
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			n := board[i][j]
+			if n != '.' {
+				nn := n - '0'
+				mi[i][nn] = true
+				mj[j][nn] = true
+				m3[i/3*3+j/3][nn] = true
+			}
+		}
+	}
+	holes := solveSudokuCollectHoles(board)
+	solveSudokuIter(board, mi, mj, m3, holes)
+}
+func solveSudokuCollectHoles(board [][]byte) (ret [][]int) {
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			n := board[i][j]
+			if n == '.' {
+				ret = append(ret, []int{i, j})
+			}
+		}
+	}
+	return
+}
+func solveSudokuIter(board [][]byte, mi, mj, m3 [9][10]bool, holes [][]int) bool {
+	if len(holes) == 0 {
+		return true
+	}
+	i, j := holes[0][0], holes[0][1]
+	// fmt.Printf("for %d,%d\n", i, j)
+	m := solveSudokuOccupy(mi, mj, m3, i, j)
+	possible := solveSudokuPossible(m)
+	if len(possible) == 0 {
+		// solveSudokuPrint(board)
+		// fmt.Printf("no possible solution for %d,%d\n", i, j)
+		return false
+	}
+	for _, p := range possible {
+		// fmt.Printf("try %d for %d,%d\n", p, i, j)
+		board[i][j] = byte('0' + p)
+		mi[i][p] = true
+		mj[j][p] = true
+		m3[i/3*3+j/3][p] = true
+		if solveSudokuIter(board, mi, mj, m3, holes[1:]) {
+			return true
+		}
+		mi[i][p] = false
+		mj[j][p] = false
+		m3[i/3*3+j/3][p] = false
+		board[i][j] = '.'
+	}
+	// fmt.Printf("try %v for %d,%d, find nothing\n", possible, i, j)
+	return false
+}
+func solveSudokuOccupy(mi, mj, m3 [9][10]bool, i, j int) (m [10]bool) { // true for not possible
+	for k, v := range mi[i] {
+		if v {
+			m[k] = true
+		}
+	}
+	for k, v := range mj[j] {
+		if v {
+			m[k] = true
+		}
+	}
+	for k, v := range m3[i/3*3+j/3] {
+		if v {
+			m[k] = true
+		}
+	}
+	return
+}
+func solveSudokuPrint(board [][]byte) {
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			fmt.Printf("%c ", board[i][j])
+		}
+		fmt.Printf("\n")
+	}
+}
+func solveSudokuPossible(m [10]bool) (ret []int) {
+	for i := 1; i <= 9; i++ {
+		if m[i] == false {
+			ret = append(ret, i)
+		}
+	}
+	return
+}
