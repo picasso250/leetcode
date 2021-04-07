@@ -192,3 +192,40 @@ func fullJustifySpaces(n int) []byte {
 	}
 	return ret
 }
+
+// i==0,dp[i][j]=j
+// j==0,dp[i][j]=i
+// dp[i][j]=
+// min(dp[i-1][j]+1,dp[i][j-1]+1,==?c:c+1)
+func minDistance(word1 string, word2 string) int {
+	dp := make([][]int, len(word1)+1)
+	for i := 0; i <= len(word1); i++ {
+		dp[i] = make([]int, len(word2)+1)
+		dp[i][0] = i
+	}
+	for j := 0; j <= len(word2); j++ {
+		dp[0][j] = j
+	}
+	for i := 1; i <= len(word1); i++ {
+		for j := 1; j <= len(word2); j++ {
+			c := dp[i-1][j-1]
+			if word1[i-1] != word2[j-1] {
+				c += 1
+			}
+			dp[i][j] = minInts(dp[i-1][j]+1, dp[i][j-1]+1, c)
+		}
+	}
+	return dp[len(word1)][len(word2)]
+}
+func minInts(a ...int) int {
+	if len(a) == 0 {
+		return 0
+	}
+	min := a[0]
+	for _, x := range a {
+		if x < min {
+			min = x
+		}
+	}
+	return min
+}
