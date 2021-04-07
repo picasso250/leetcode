@@ -45,3 +45,4 @@ Temporary Items
 
 *.stackdump
 *.exe
+go/debug.test
