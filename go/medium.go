@@ -24,3 +24,19 @@ func simplifyPath(path string) string {
 	}
 	return strings.Join(b, "/")
 }
+func searchMatrix(matrix [][]int, target int) bool {
+	m := len(matrix)
+	n := len(matrix[0])
+	i, j := 0, m*n
+	for i < j {
+		h := (i + j) / 2
+		if matrix[h/n][h%n] == target {
+			return true
+		} else if matrix[h/n][h%n] < target {
+			i = h + 1
+		} else {
+			j = h
+		}
+	}
+	return false
+}
