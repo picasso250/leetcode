@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -33,4 +32,23 @@ func mySqrt(x int) int {
 	}
 	// fmt.Printf("%d for %d\n", cnt, x)
 	return int(guess)
+}
+func climbStairs(n int) int {
+	if n == 1 {
+		return 1
+	}
+	if n == 2 {
+		return 2
+	}
+	n1, n2 := 1, 2
+	i := 2
+	for {
+		t := n2
+		n2 = n1 + n2
+		n1 = t
+		i++
+		if i == n {
+			return n2
+		}
+	}
 }
