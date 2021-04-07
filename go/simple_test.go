@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func Test_maxSubArray(t *testing.T) {
 	type args struct {
@@ -18,6 +20,27 @@ func Test_maxSubArray(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := maxSubArray(tt.args.nums); got != tt.want {
 				t.Errorf("maxSubArray() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_mySqrt(t *testing.T) {
+	type args struct {
+		x int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"1", args{4}, 2},
+		{"2", args{8}, 2},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := mySqrt(tt.args.x); got != tt.want {
+				t.Errorf("mySqrt() = %v, want %v", got, tt.want)
 			}
 		})
 	}
