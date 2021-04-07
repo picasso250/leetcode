@@ -1377,3 +1377,21 @@ func (x ByteSlice) Swap(i, j int)      { x[i], x[j] = x[j], x[i] }
 
 // Sort is a convenience method: x.Sort() calls Sort(x).
 func (x ByteSlice) Sort() { sort.Sort(x) }
+
+func myPow(x float64, n int) float64 {
+	if n < 0 {
+		return 1 / myPow(x, -n)
+	}
+	if n == 0 {
+		return float64(1)
+	}
+	if n == 1 {
+		return x
+	}
+	if n%2 == 0 {
+		a := myPow(x, n/2)
+		return a * a
+	} else {
+		return x * myPow(x, n-1)
+	}
+}
