@@ -113,3 +113,82 @@ func solveNQueensGetEmptyBoard(n int) (board [][]byte) {
 	}
 	return
 }
+func fullJustify(words []string, maxWidth int) []string {
+	n := len(words)
+	ret := make([]string, 0)
+	i := 0
+outer:
+	for i < n {
+		lineLen := 0
+		j := i
+		for ; j < n; j++ {
+			leastLen := len(words[j])
+			if j > i {
+				leastLen += 1
+			}
+			lineLen += leastLen
+			if lineLen > maxWidth {
+				ret = append(ret, fullJustifyLine(words[i:j], maxWidth))
+				i = j
+				continue outer
+			}
+		}
+		break
+	}
+	if i < n {
+		ret = append(ret, fullJustifyLineLast(words[i:], maxWidth))
+	}
+	return ret
+}
+
+func fullJustifyLineLast(words []string, maxWidth int) string {
+	if len(words) == 1 {
+		return string(append([]byte(words[0]), fullJustifySpaces(maxWidth-len(words[0]))...))
+	}
+	n := len(words)
+	ret := make([]byte, 0)
+	for i := 0; i < n; i++ {
+		ret = append(ret, words[i]...)
+		if i != n-1 {
+			ret = append(ret, ' ')
+		}
+	}
+	ret = append(ret, fullJustifySpaces(maxWidth-len(ret))...)
+	return string(ret)
+}
+func fullJustifyLine(words []string, maxWidth int) string {
+	if len(words) == 1 {
+		return string(append([]byte(words[0]), fullJustifySpaces(maxWidth-len(words[0]))...))
+	}
+	nw := fullJustifyTotalChar(words)
+	ns := maxWidth - nw
+	n := len(words) - 1
+	d := ns / n
+	fat := ns - n*d
+	ret := make([]byte, 0)
+	for i := 0; i < n; i++ {
+		ret = append(ret, words[i]...)
+		dd := d
+		if i < fat {
+			dd += 1
+		}
+		s := fullJustifySpaces(dd)
+		ret = append(ret, s...)
+	}
+	ret = append(ret, words[n]...)
+	return string(ret)
+}
+func fullJustifyTotalChar(words []string) int {
+	n := 0
+	for _, word := range words {
+		n += len(word)
+	}
+	return n
+}
+func fullJustifySpaces(n int) []byte {
+	ret := make([]byte, n)
+	for i := 0; i < n; i++ {
+		ret[i] = ' '
+	}
+	return ret
+}
