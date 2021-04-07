@@ -1320,3 +1320,60 @@ func clumsy(N int) int {
 	}
 	return s
 }
+func rotate(matrix [][]int) {
+	n := len(matrix)
+	for i := 0; i < n/2; i++ {
+
+	}
+	if n%2 == 0 {
+
+	} else {
+
+	}
+}
+func rotateTopLeftToCenter(n, i, j int) (x, y int) {
+	c := n / 2
+	if n%2 == 0 {
+		if i < 2 {
+			x = i - c
+		} else {
+			x = i - c + 1
+		}
+		if j < 2 {
+			x = -j + c
+		} else {
+			x = -j + c - 1
+		}
+		return
+	} else {
+		return i - c, -j + c
+	}
+}
+func rotateCenterToTopLeft(n, x, y int) (i, j int) {
+	return x + n/2, y + n/2
+}
+func groupAnagrams(strs []string) [][]string {
+	m := make(map[string][]string)
+	for _, s := range strs {
+		sb := []byte(s)
+		asb := make([]byte, len(sb))
+		copy(asb, sb)
+		ByteSlice(asb).Sort()
+		m[string(asb)] = append(m[string(asb)], s)
+	}
+	ret := make([][]string, 0)
+	for _, ss := range m {
+		ret = append(ret, ss)
+	}
+	return ret
+}
+
+// ByteSlice attaches the methods of Interface to []int, sorting in increasing order.
+type ByteSlice []byte
+
+func (x ByteSlice) Len() int           { return len(x) }
+func (x ByteSlice) Less(i, j int) bool { return x[i] < x[j] }
+func (x ByteSlice) Swap(i, j int)      { x[i], x[j] = x[j], x[i] }
+
+// Sort is a convenience method: x.Sort() calls Sort(x).
+func (x ByteSlice) Sort() { sort.Sort(x) }
