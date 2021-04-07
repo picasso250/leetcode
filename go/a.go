@@ -1291,3 +1291,32 @@ func multiplyAdd3(a, b, c int) (n, carry int) {
 	}
 	return
 }
+func clumsy(N int) int {
+	n := N / 4
+	if n*4 < N {
+		n++
+	}
+	s := 0
+	for i := 0; i < n; i++ {
+		a, b, c, d := i*4+0, i*4+1, i*4+2, i*4+3
+		a, b, c, d = N-a, N-b, N-c, N-d
+		var sign int
+		if i == 0 {
+			sign = 1
+		} else {
+			sign = -1
+		}
+		var ss int
+		if a == 1 {
+			ss = sign * a
+		} else if b == 1 {
+			ss = sign * a * b
+		} else if c == 1 {
+			ss = sign * a * b / c
+		} else {
+			ss = sign*a*b/c + d
+		}
+		s += ss
+	}
+	return s
+}

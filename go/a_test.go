@@ -690,3 +690,27 @@ func Test_multiply(t *testing.T) {
 		})
 	}
 }
+
+func Test_clumsy(t *testing.T) {
+	type args struct {
+		N int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"1", args{1}, 1},
+		{"2", args{2}, 2 * 1},
+		{"3", args{3}, 3 * 2 / 1},
+		{"1", args{4}, 4*3/2 + 1},
+		{"2", args{10}, 12},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := clumsy(tt.args.N); got != tt.want {
+				t.Errorf("clumsy() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
