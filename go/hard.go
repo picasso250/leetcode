@@ -217,15 +217,3 @@ func minDistance(word1 string, word2 string) int {
 	}
 	return dp[len(word1)][len(word2)]
 }
-func minInts(a ...int) int {
-	if len(a) == 0 {
-		return 0
-	}
-	min := a[0]
-	for _, x := range a {
-		if x < min {
-			min = x
-		}
-	}
-	return min
-}
