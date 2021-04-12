@@ -175,45 +175,46 @@ func numDecodings1(b byte) int {
 // dp[i][n]=dp[i+1][n-1]+dp[i+2][n-1]+dp[i+3][n-1]
 func restoreIpAddresses(s string) []string {
 	N := len(s)
-	dp := make([][][][]string, N+1)
-	for i := range dp {
-		dp[i] = make([][][]string, 4+1)
+	if N < 4 {
+		return []string{}
 	}
-	for i := N; i >= 0; i-- {
-		if i == N {
-			dp[i][1] = [][]string{}
-			continue
+	dp := make([][][]string, N+1)
+	dp[N] = [][]string{}
+	// a1 := restoreIpAddressesIpPartResult(s[N-1:])
+	// a2 := [][]string{}
+	// ss := restoreIpAddressesIpPart(s[N-2 : N-1])
+	// if len(ss) > 0 {
+	// 	a2 = concatIPParts(a2, prependStringVector(ss, a1))
+	// }
+	// a3 := [][]string{}
+	// ss = restoreIpAddressesIpPart(s[N-3 : N-2])
+	// if len(ss) > 0 {
+	// 	a3 = concatIPParts(a3, prependStringVector(ss, a2))
+	// }
+
+	for i := N - 1; i >= 0; i-- {
+		r := make([][]string, 0)
+		if i+1 <= N {
+			ss := restoreIpAddressesIpPart(s[i : i+1])
+			if len(ss) > 0 {
+				r = concatIPParts(r, prependStringVector(ss, dp[i+1], s[i:]))
+			}
 		}
-		ss := restoreIpAddressesIpPart(s[i:])
-		if len(ss) > 0 {
-			dp[i][1] = [][]string{{ss}}
+		if i+2 <= N {
+			ss := restoreIpAddressesIpPart(s[i : i+2])
+			if len(ss) > 0 {
+				r = concatIPParts(r, prependStringVector(ss, dp[i+2], s[i:]))
+			}
 		}
+		if i+3 <= N {
+			ss := restoreIpAddressesIpPart(s[i : i+3])
+			if len(ss) > 0 {
+				r = concatIPParts(r, prependStringVector(ss, dp[i+3], s[i:]))
+			}
+		}
+		dp[i] = r
 	}
-	for n := 2; n <= 4; n++ {
-		for i := N - 1; i >= 0; i-- {
-			r := make([][]string, 0)
-			if i+1 <= N {
-				ss := restoreIpAddressesIpPart(s[i : i+1])
-				if len(ss) > 0 {
-					r = concatIPParts(r, prependStringVector(ss, dp[i+1][n-1]))
-				}
-			}
-			if i+2 <= N {
-				ss := restoreIpAddressesIpPart(s[i : i+2])
-				if len(ss) > 0 {
-					r = concatIPParts(r, prependStringVector(ss, dp[i+2][n-1]))
-				}
-			}
-			if i+3 <= N {
-				ss := restoreIpAddressesIpPart(s[i : i+3])
-				if len(ss) > 0 {
-					r = concatIPParts(r, prependStringVector(ss, dp[i+3][n-1]))
-				}
-			}
-			dp[i][n] = r
-		}
-	}
-	return joinIPs(dp[0][4])
+	return joinIPs(dp[0])
 }
 func prepend(s string, ss []string) []string {
 	return append([]string{s}, ss...)
@@ -228,15 +229,20 @@ func joinIPs(s [][]string) (ret []string) {
 	}
 	return ret
 }
-func prependStringVector(s string, v [][]string) [][]string {
+func prependStringVector(s string, v [][]string, origin string) (ret [][]string) {
 	if len(v) == 0 {
-		// return [][]string{{s}}
+		return [][]string{{s}}
 		// i==N
-		return [][]string{}
+		// return [][]string{}
 	}
-	ret := make([][]string, len(v))
-	for i, e := range v {
-		ret[i] = prepend(s, e)
+	// ret := make([][]string, len(v))
+	for _, e := range v {
+		if len(e) < 4 {
+			ss := prepend(s, e)
+			if strings.Join(ss, "") == origin {
+				ret = append(ret, ss)
+			}
+		}
 	}
 	return ret
 }
@@ -246,6 +252,14 @@ func concatIPParts(a, b [][]string) [][]string {
 	copy(ret[len(a):], b)
 	return ret
 }
+
+// func restoreIpAddressesIpPartResult(s string) [][]string {
+// 	ss := restoreIpAddressesIpPart(s)
+// 	if len(ss) > 0 {
+// 		return [][]string{{ss}}
+// 	}
+// 	return [][]string{}
+// }
 
 func restoreIpAddressesIpPart(s string) string {
 	if s == "0" {

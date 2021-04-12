@@ -130,6 +130,7 @@ func Test_restoreIpAddresses(t *testing.T) {
 		{"3", args{"1111"}, []string{"1.1.1.1"}},
 		{"4", args{"010010"}, []string{"0.10.0.10", "0.100.1.0"}},
 		{"5", args{"101023"}, []string{"1.0.10.23", "1.0.102.3", "10.1.0.23", "10.10.2.3", "101.0.2.3"}},
+		{"t", args{"0279245587303"}, []string{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
