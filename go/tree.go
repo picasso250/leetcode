@@ -179,3 +179,13 @@ func treeHeight(root *TreeNode) int {
 	}
 	return maxInts(treeHeight(root.Left), treeHeight(root.Right)) + 1
 }
+func isBalancedIter(root *TreeNode) (isBal bool, height int) {
+	if root == nil {
+		return true, 0
+	}
+	leftIsBal, leftHeight := isBalancedIter(root.Left)
+	rightIsBal, rightHeight := isBalancedIter(root.Right)
+	isBal = absInt(leftHeight-rightHeight) <= 1 && leftIsBal && rightIsBal
+	height = maxInts(leftHeight, rightHeight) + 1
+	return
+}
