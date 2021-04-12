@@ -8,22 +8,24 @@ type TreeNode struct {
 }
 
 func isValidBST(root *TreeNode) bool {
+	v, _, _ := isValidBSTIter(root)
+	return v
+}
+
+const INT_MAX = int(^uint(0) >> 1)
+const INT_MIN = ^INT_MAX
+
+func isValidBSTIter(root *TreeNode) (isValid bool, max, min int) {
 	if root == nil {
-		return true
+		return true, INT_MIN, INT_MAX
 	}
-	left := treeToList(root.Left)
-	for _, x := range left {
-		if !(x < root.Val) {
-			return false
-		}
-	}
-	right := treeToList(root.Right)
-	for _, x := range right {
-		if !(x > root.Val) {
-			return false
-		}
-	}
-	return isValidBST(root.Left) && isValidBST(root.Right)
+	validLeft, leftMax, leftMin := isValidBSTIter(root.Left)
+	validRight, rightMax, rightMin := isValidBSTIter(root.Right)
+	isValid = validLeft && validRight &&
+		root.Val > leftMax && root.Val < rightMin
+	max = maxInts(leftMax, rightMax, root.Val)
+	min = minInts(leftMin, rightMin, root.Val)
+	return
 }
 func treeToList(root *TreeNode) (ret []int) {
 	if root == nil {
