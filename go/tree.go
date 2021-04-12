@@ -166,3 +166,16 @@ func treeToString(tree *TreeNode) string {
 	return fmt.Sprintf("(%s %d %s)",
 		treeToString(tree.Left), tree.Val, treeToString(tree.Right))
 }
+func isBalanced(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+	return absInt(treeHeight(root.Left)-treeHeight(root.Right)) <= 1 &&
+		isBalanced(root.Left) && isBalanced(root.Right)
+}
+func treeHeight(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	return maxInts(treeHeight(root.Left), treeHeight(root.Right)) + 1
+}
