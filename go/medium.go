@@ -170,3 +170,92 @@ func numDecodings1(b byte) int {
 // 	}
 // 	return cnt
 // }
+
+// dp[i][n] i=(index of string s), n=(number of ip part)
+// dp[i][n]=dp[i+1][n-1]+dp[i+2][n-1]+dp[i+3][n-1]
+func restoreIpAddresses(s string) []string {
+	N := len(s)
+	dp := make([][][][]string, N+1)
+	for i := range dp {
+		dp[i] = make([][][]string, 4+1)
+	}
+	for i := N; i >= 0; i-- {
+		if i == N {
+			dp[i][1] = [][]string{}
+			continue
+		}
+		ss := restoreIpAddressesIpPart(s[i:])
+		if len(ss) > 0 {
+			dp[i][1] = [][]string{{ss}}
+		}
+	}
+	for n := 2; n <= 4; n++ {
+		for i := N - 1; i >= 0; i-- {
+			r := make([][]string, 0)
+			if i+1 <= N {
+				ss := restoreIpAddressesIpPart(s[i : i+1])
+				if len(ss) > 0 {
+					r = concatIPParts(r, prependStringVector(ss, dp[i+1][n-1]))
+				}
+			}
+			if i+2 <= N {
+				ss := restoreIpAddressesIpPart(s[i : i+2])
+				if len(ss) > 0 {
+					r = concatIPParts(r, prependStringVector(ss, dp[i+2][n-1]))
+				}
+			}
+			if i+3 <= N {
+				ss := restoreIpAddressesIpPart(s[i : i+3])
+				if len(ss) > 0 {
+					r = concatIPParts(r, prependStringVector(ss, dp[i+3][n-1]))
+				}
+			}
+			dp[i][n] = r
+		}
+	}
+	return joinIPs(dp[0][4])
+}
+func prepend(s string, ss []string) []string {
+	return append([]string{s}, ss...)
+}
+func joinIPs(s [][]string) (ret []string) {
+	for _, v := range s {
+		if len(v) == 4 {
+			ret = append(ret, strings.Join(v, "."))
+			// } else {
+			// 	fmt.Printf("trim %v\n", v)
+		}
+	}
+	return ret
+}
+func prependStringVector(s string, v [][]string) [][]string {
+	if len(v) == 0 {
+		// return [][]string{{s}}
+		// i==N
+		return [][]string{}
+	}
+	ret := make([][]string, len(v))
+	for i, e := range v {
+		ret[i] = prepend(s, e)
+	}
+	return ret
+}
+func concatIPParts(a, b [][]string) [][]string {
+	ret := make([][]string, len(a)+len(b))
+	copy(ret, a)
+	copy(ret[len(a):], b)
+	return ret
+}
+
+func restoreIpAddressesIpPart(s string) string {
+	if s == "0" {
+		return "0"
+	}
+	if len(s) <= 3 && len(s) > 0 {
+		a, _ := strconv.Atoi(s)
+		if a > 0 && a < 256 && s[0] != '0' {
+			return s
+		}
+	}
+	return ""
+}
