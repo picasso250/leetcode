@@ -68,3 +68,50 @@ func Test_merge(t *testing.T) {
 		})
 	}
 }
+
+// func Test_insert(t *testing.T) {
+// 	type args struct {
+// 		intervals   [][]int
+// 		newInterval []int
+// 	}
+// 	tests := []struct {
+// 		name string
+// 		args args
+// 		want [][]int
+// 	}{
+// 		{"1", args{[][]int{{1, 3}, {6, 9}}, []int{2, 5}}, [][]int{{1, 5}, {6, 9}}},
+// 		{"0", args{[][]int{}, []int{5, 7}}, [][]int{{5, 7}}},
+// 	}
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			if got := insert(tt.args.intervals, tt.args.newInterval); !reflect.DeepEqual(got, tt.want) {
+// 				t.Errorf("insert() = %v, want %v", got, tt.want)
+// 			}
+// 		})
+// 	}
+// }
+
+func Test_numDecodings(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"1", args{"12"}, 2},
+		{"1", args{"226"}, 3},
+		{"1", args{"0"}, 0},
+		{"06", args{"06"}, 0},
+		{"2", args{"8008"}, 0},
+		{"t", args{"2101"}, 1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := numDecodings(tt.args.s); got != tt.want {
+				t.Errorf("numDecodings() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
