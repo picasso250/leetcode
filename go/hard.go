@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"strconv"
+)
+
 type solveNQueensOccupy struct {
 	cols map[int]bool
 	rows map[int]bool
@@ -216,4 +221,116 @@ func minDistance(word1 string, word2 string) int {
 		}
 	}
 	return dp[len(word1)][len(word2)]
+}
+
+func token(expr string) (ret []string) {
+	state := 0
+	word := []rune{}
+	for _, c := range expr {
+		switch state {
+		case 0:
+			if c == ')' || c == '(' {
+				ret = append(ret, string([]rune{c}))
+			} else if c == ' ' {
+				if len(word) > 0 {
+					ret = append(ret, string(word))
+				}
+			} else {
+				word = []rune{c}
+				state = 1
+			}
+		case 1:
+			if c == ')' || c == '(' {
+				ret = append(ret, string(word), string([]rune{c}))
+				state = 0
+				word = make([]rune, 0)
+			} else if c == ' ' {
+				if len(word) > 0 {
+					ret = append(ret, string(word))
+				}
+				state = 0
+				word = make([]rune, 0)
+			} else {
+				word = append(word, c)
+			}
+		}
+	}
+	if len(word) > 0 {
+		ret = append(ret, string(word))
+	}
+	return
+}
+
+func ast(tklst []string) interface{} {
+	ret := []interface{}{}
+	for _, tk := range tklst {
+		if tk == ")" {
+			i := len(ret) - 1
+			for ; i >= 0; i-- {
+				if ret[i] == "(" {
+					break
+				}
+			}
+			n := len(ret) - i - 1
+			curAST := make([]interface{}, n, n)
+			copy(curAST, ret[i+1:])
+			ret = ret[:i]
+			ret = append(ret, curAST)
+		} else {
+			ret = append(ret, tk)
+		}
+	}
+	return ret[0]
+}
+
+type Env struct {
+	vars   map[string]int
+	parent *Env
+}
+
+func lookup(name string, env *Env) int {
+	if v, ok := env.vars[name]; ok {
+		return v
+	} else {
+		return lookup(name, env.parent)
+	}
+}
+func eval(ast interface{}, env *Env) int {
+	switch v := ast.(type) { // v表示b1 接口转换成Bag对象的值
+	case string:
+		n, err := strconv.Atoi(v)
+		if err != nil {
+			return lookup(v, env)
+		} else {
+			return n
+		}
+	case []interface{}:
+		first, rest := v[0], v[1:]
+		switch first {
+		case "let":
+			m := make(map[string]int)
+			for ; len(rest) > 2; rest = rest[2:] {
+				v := rest[0].(string)
+				e := rest[1]
+				m[v] = eval(e, &Env{m, env})
+			}
+			expr := rest[0]
+			newEnv := Env{m, env}
+			return eval(expr, &newEnv)
+		case "add":
+			e1, e2 := eval(rest[0], env), eval(rest[1], env)
+			return e1 + e2
+		case "mult":
+			e1, e2 := eval(rest[0], env), eval(rest[1], env)
+			return e1 * e2
+		}
+	default:
+		fmt.Println("b1.(type):", "other", v)
+	}
+	return 0
+}
+
+// string | []
+func evaluate(expression string) int {
+	return eval(ast(token((expression))), &Env{})
 }
